@@ -1,8 +1,5 @@
 import VueRouter from 'vue-router'
 import Vue from 'vue'
-import HomePage from '../pages/HomePage.vue'
-import LogIn from '../pages/LogIn.vue'
-import BookingList from '../pages/BookingList.vue'
 
 //安装Vue.use插件
 Vue.use(VueRouter)
@@ -15,18 +12,28 @@ const routes=[
     },
     {
         path:'/homepage',
-        component:HomePage,
-        name:'homepage'
+        name:'homepage',
+        component: () => import('../pages/HomePage.vue')
     },
     {
         path: '/login',
-        component:LogIn,
-        name:'login'
+        name:'login',
+        component: () => import('../pages/LogIn.vue')
     },
     {
         path:'/list',
-        component:BookingList,
-        name:'list'
+        name:'list',
+        component: () => import('../pages/BookingList.vue')
+    },
+    {
+        path:'/roominfo',
+        name:'roominfo',
+        component: () => import('../pages/RoomInfo.vue')
+    },
+    {
+        path:'/calendar',
+        name:'calendar',
+        component: () => import('../pages/BookingCalendar.vue')
     }
 ]
 

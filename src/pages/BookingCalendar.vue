@@ -1,50 +1,27 @@
 <template>
-  <div class="bookingcalendar">
-    <el-container>
-      <el-menu
-        default-active="1"
-        class="el-menu-vertical-demo"
-        @open="handleOpen"
-        @close="handleClose"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b">
-        <h2 class="headline">会议室预定系统</h2>
-        <el-menu-item index="1">
-          预约会议室
-        </el-menu-item>
-        <el-menu-item index="2">
-          我的订单
-        </el-menu-item>
-        <el-menu-item index="3">
-          个人中心
-        </el-menu-item>
-        <el-menu-item index="4">
-          使用指南
-        </el-menu-item>
-      </el-menu>
-      
-      <el-container>
-        <el-header>
-          <el-select v-model="value" placeholder="请选择会议室">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          
-        </el-header>
-        <el-main>
-          <FullCalendar :options="calendarOptions" ref="FullCalendar"/>
-        </el-main>
-      </el-container>
-    </el-container>
+  <div id="bookingcalendar">
+    <HeaderMenu/>
+    <div class="main">
+      <div class="choice">
+        <span>选择会议室：</span>
+        <el-select v-model="value" placeholder="请选择会议室" prefix="123">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <div class="calendar">
+        <FullCalendar :options="calendarOptions" ref="FullCalendar"/>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import HeaderMenu from '../components/HeaderMenu.vue'
 import '@fullcalendar/core/vdom' // solves problem with Vite
 import FullCalendar from '@fullcalendar/vue'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -54,7 +31,8 @@ import interactionPlugin from '@fullcalendar/interaction'
 export default {
   name: 'BookingCalendar',
   components:{
-    FullCalendar
+    FullCalendar,
+    HeaderMenu
   },
   data () {
     return {
@@ -87,7 +65,7 @@ export default {
         // 按钮: dayGridMonth月 timeGridWeek周 timeGridDay日
         headerToolbar: {
           left: 'prev,next today',
-          // center: 'tittle',
+          // center:'tittle',
           right: 'dayGridMonth,timeGridWeek,timeGridDay',
         },
         // 设置各种按钮的文字  默认是英文的
@@ -95,8 +73,7 @@ export default {
           today:'今天',
           month:'月',
           week:'周',
-          day:'日',
-          list:'表'
+          day:'日'
         },
         // 初始就存在的事件
         initialEvents: [
@@ -109,11 +86,15 @@ export default {
         {
           id: 2,
           title: `会议:xxxxxxxxx`,
-          start: '2022-04-29' + 'T08:00:00',
+          start: '2022-04-29' + 'T08:15:00',
           end: '2022-04-29' + 'T22:00:00',
         }],
+        //月视图下日历格子宽度和高度的比例
+        aspectRatio: 1.5,
+        //agenda视图下是否显示all-day
+        allDaySlot: false,
         // 是否可拖拽
-        editable: true,
+        editable: false,
         // 是否可选择添加
         selectable: true,
         // 选择时触发函数
@@ -125,9 +106,9 @@ export default {
         // 全天行 的文本显示内容
         allDayText: '全天',
         // 最小时间
-        slotMinTime:'07:00:00',
+        slotMinTime:'08:00:00',
         // 最大时间
-        slotMaxTime:'24:00:00',
+        slotMaxTime:'22:00:00',
       },
     }
   }
@@ -136,25 +117,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .el-header, .el-footer {
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-  }
-
-  .headline {
-    color:white;
-  }
-  /* .el-aside {
+  #bookingcalendar{
     background-color: #E9EEF3;
-    color: #333;
-    line-height: 200px;
-  } */
-  
-  .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
-    min-height: 400px;
+    width: 100%;
+    height: 100%;	
+    overflow-y: scroll;
+    margin: 0 auto;
+    position: fixed;
   }
-  
+  .choice{
+    margin: 1% 3% 1% 3%;
+  }
 </style>

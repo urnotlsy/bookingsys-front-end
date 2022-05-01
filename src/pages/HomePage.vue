@@ -12,7 +12,7 @@
       </el-card>
       <div class="main-options">
         <el-card class="options-card" shadow="hover" style="background:#409EFF">
-          <el-button class="card-button" type="text">查看</el-button>
+          <el-button class="card-button" type="text" @click="checkCalendar">查看</el-button>
           <h1 class="card-content">预约日历</h1>
         </el-card>
         <el-card class="options-card" shadow="hover" style="background:#67C23A">
@@ -20,7 +20,7 @@
           <h1 class="card-content">预约列表</h1>
         </el-card>
         <el-card class="options-card" shadow="hover" style="background:#E6A23C">
-          <el-button class="card-button" type="text">查看</el-button>
+          <el-button class="card-button" type="text" @click="checkRoom">查看</el-button>
           <h1 class="card-content">会议室详细信息</h1>
         </el-card>
         <el-card class="options-card" shadow="hover" style="background:#F56C6C">
@@ -66,8 +66,14 @@ export default {
     }
   },
   methods:{
+    checkCalendar(){
+      this.$router.replace({name:'calendar'})
+    },
     checkList(){
       this.$router.replace({name:'list'})
+    },
+    checkRoom(){
+      this.$router.replace({name:'roominfo'})
     }
   }
 }

@@ -9,7 +9,7 @@
       </div>
       <div style="margin-right:10%">  
         <el-button class="hd-content" type="text" style="float:right" @click="logIn">登录</el-button>
-        <el-button class="hd-content" type="text" style="float:right">注册</el-button>
+        <!-- <el-button class="hd-content" type="text" style="float:right">注册</el-button> -->
       </div>
       </el-row>
   </div>

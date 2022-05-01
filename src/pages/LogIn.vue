@@ -11,7 +11,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="onSubmit">登录</el-button>
-            <el-button>取消</el-button>
+            <el-button @click="backToHome">取消</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -32,6 +32,16 @@ export default {
         id:'',
         pass:'',
       }
+    }
+  },
+  methods:{
+    //跳转回首页
+    backToHome(){
+      this.$router.push('/homepage')
+    },
+    //提交账密
+    onSubmit(){
+
     }
   }
 }
