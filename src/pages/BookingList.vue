@@ -60,7 +60,13 @@
             label="操作"
             width="120">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="primary" plain size="small">取消预约</el-button>
+              <el-button 
+                @click="handleClick(scope.row)" 
+                type="primary" 
+                plain 
+                size="small">
+                取消预约
+              </el-button>
             </template>
           </el-table-column>
         </el-table>

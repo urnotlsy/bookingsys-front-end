@@ -34,6 +34,11 @@ const routes=[
         path:'/calendar',
         name:'calendar',
         component: () => import('../pages/BookingCalendar.vue')
+    },
+    {
+        path:'/order',
+        name:'order',
+        component: () => import('../pages/NewOrder.vue')
     }
 ]
 

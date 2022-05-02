@@ -4,12 +4,27 @@
     <el-row>
       <router-view></router-view>
       <div style="margin-left:5%">
-        <h1 class="hd-content" style="float:left">会议室预定系统</h1>
-        <el-button class="hd-content" type="text" style="float:left" @click="backToHome">首页</el-button>
+        <h1 
+          class="hd-content" 
+          style="float:left">
+          会议室预定系统
+        </h1>
+        <el-button 
+          class="hd-content" 
+          type="text" 
+          style="float:left" 
+          @click="backToHome">
+          首页
+        </el-button>
       </div>
       <div style="margin-right:10%">  
-        <el-button class="hd-content" type="text" style="float:right" @click="logIn">登录</el-button>
-        <!-- <el-button class="hd-content" type="text" style="float:right">注册</el-button> -->
+        <el-button 
+          class="hd-content" 
+          type="text" 
+          style="float:right" 
+          @click="logIn">
+          登录
+        </el-button>
       </div>
       </el-row>
   </div>

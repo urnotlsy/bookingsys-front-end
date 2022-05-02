@@ -23,7 +23,13 @@
             label="查看预定情况"
             width="160">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row.id)" type="primary" plain size="small">查看预定情况</el-button>
+              <el-button 
+                @click="handleClick(scope.row.id)" 
+                type="primary" 
+                plain 
+                size="small">
+                查看预定情况
+              </el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -55,14 +61,14 @@ export default {
         {
           id:1,
           building:'济事楼',
-          number:403,
+          number:441,
           capacity:20,
           intro:'hhhhh'
         },
         {
           id:2,
           building:'济事楼',
-          number:403,
+          number:441,
           capacity:20,
           intro:'hhhhh'
         },
@@ -141,7 +147,8 @@ export default {
   },
   methods:{
     handleClick(id) {
-        console.log(id);
+        // console.log(id);
+        this.$router.push({name:'calendar',params: {id:id}}) // 只能用 name
       }
   }
 }
