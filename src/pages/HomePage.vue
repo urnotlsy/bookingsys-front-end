@@ -62,7 +62,7 @@
             @click="addOrder">
             查看
           </el-button>
-          <h1 class="card-content">会议室预定</h1>
+          <h1 class="card-content">{{role=='2'?'改名了':'会议室预定'}}</h1>
         </el-card>
       </div>
     </div>  
@@ -78,6 +78,10 @@ export default {
   },
   data () {
     return {
+      //调试用，之后用全局变量
+      role:'2',      //1用户，2物业，3管理员
+      login:'0',
+
       rules:[{
         rule:'会议室实行网上预约使用与管理。',
         key:1

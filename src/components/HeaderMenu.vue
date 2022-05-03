@@ -17,25 +17,29 @@
           首页
         </el-button>
       </div>
-      <div style="margin-right:10%">  
-        <el-button 
-          class="hd-content" 
-          type="text" 
-          style="float:right" 
-          @click="logIn">
-          登录
-        </el-button>
-      </div>
+      <LogInButton v-if="login==0"></LogInButton>
+      <Personal-Button v-else-if="login==1" class="personal-button"></Personal-Button>
+      <!-- <component :is="showWhat"></component> -->
       </el-row>
   </div>
 </template>
 
 <script>
-
+import LogInButton from './LogInButton.vue'
+import PersonalButton from './PersonalButton.vue'
 export default {
   name: 'HeaderMenu',
+  components:{
+    LogInButton,
+    PersonalButton
+  },
   data(){
-    return{}
+    return{
+      //调试用，之后用全局变量
+      role:'1',      //1用户，2物业，3管理员
+      login:'1',
+
+    }
   },
   methods:{
     //跳转回首页
@@ -46,7 +50,6 @@ export default {
     //登录
     logIn(){
       this.$router.push('/login')
-      this.$destroy()
     }
   }
   
@@ -62,5 +65,7 @@ export default {
     margin:1% 1% 1% 1%;
     color:white;
   }
-  
+  /* .personal-button{
+    width: 10%;
+  } */
 </style>

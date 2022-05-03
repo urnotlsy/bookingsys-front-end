@@ -7,7 +7,7 @@
         <el-select 
           v-model="roomValue" 
           placeholder="请选择会议室" 
-          @change="changeRoom(value)">
+          @change="changeRoom(roomValue)">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -53,7 +53,7 @@
             <i class="el-icon-office-building"></i>
             会议室
           </template>
-          {{eventInfo.room}}
+          {{this.roomValue}}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -204,7 +204,6 @@ export default {
     },
     //点击日历上的事件
     handleEventClick(e){
-      console.log(e.event.extendedProps);
       this.eventInfo.start=e.event.start;
       this.eventInfo.end=e.event.end;
       this.eventInfo.name=e.event.extendedProps.name;
