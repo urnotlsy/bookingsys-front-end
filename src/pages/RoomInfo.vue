@@ -2,6 +2,56 @@
   <div id="roominfo">
     <HeaderMenu/>
     <div class="main">
+      <div class="room-add" v-if="role==3">
+        <el-button 
+          type="primary" 
+          @click="dialogVisible = true"
+          class="add-button">
+          新建会议室
+        </el-button>
+        <el-dialog
+          title="新建会议室"
+          :visible.sync="dialogVisible"
+          width="70%"
+          :before-close="handleClose"
+          append-to-body>
+          <el-form
+            :model="newRoom"
+            label-width="10%"
+            :rules="rules"
+            ref="newRoom">
+            <el-form-item 
+              label="会议室" 
+              prop="number">
+              <el-input 
+                v-model="newRoom.number"
+                placeholder="请输入会议室编号">
+              </el-input>
+            </el-form-item>
+            <el-form-item 
+              label="容量" 
+              prop="capacity">
+              <el-input 
+                v-model="newRoom.capacity"
+                placeholder="请输入会议室可容纳人数">
+              </el-input>
+            </el-form-item>
+            <el-form-item 
+              label="简介" 
+              prop="intro">
+              <el-input 
+                v-model="newRoom.intro"
+                placeholder="请用200个以内的字符简单介绍一下这间会议室"
+                type="textarea">
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="resetForm('newRoom')">重 置</el-button>
+              <el-button type="primary" @click="submitNewRoom('newRoom')">确 定</el-button>
+            </el-form-item>
+          </el-form>
+        </el-dialog>
+      </div>
       <el-card class="card">
         <el-table
           ref="filterTable"
@@ -11,7 +61,7 @@
           style="width: 100%">
           <el-table-column
             prop="number"
-            label="名称"
+            label="会议室"
             width="100">
           </el-table-column>
           <el-table-column
@@ -44,8 +94,17 @@
                 @click="clickToOrder(scope.row.number)" 
                 type="primary" 
                 plain 
-                size="small">
+                size="small"
+                v-if="role==1||role==2">
                 预约会议室
+              </el-button>
+              <el-button 
+                @click="deleteRoom(scope.row.number)" 
+                type="danger" 
+                plain 
+                size="small"
+                v-if="role==3">
+                删除会议室
               </el-button>
             </template>
           </el-table-column>
@@ -65,6 +124,9 @@ export default {
   },
   data(){
     return{
+      //调试用，之后用全局变量
+      role:'3',      //1用户，2物业，3管理员
+
       rooms:[
         {
           id:1,
@@ -138,7 +200,18 @@ export default {
           capacity:20,
           intro:'hhhhh'
         }
-      ]
+      ],
+      dialogVisible: false,
+      newRoom:{
+        number:'',
+        capacity:'',
+        intro:''
+      },
+      rules:{
+        number:[{required: true, message: '请输入会议室编号', trigger: 'blur'}],
+        capacity:[{type:'number', required: true, message: '请输入会议室容量', trigger: 'blur'}],
+        intro:[{max: 200, message:'字符控制在200个以内',trigger: 'blur'}]
+      }
     }
   },
   methods:{
@@ -148,6 +221,29 @@ export default {
     },
     clickToOrder(number){
       this.$router.push({name:'order',params: {number:number}})
+    },
+    deleteRoom(number){
+      console.log('删除'+number);
+    },
+    addRoom(){
+      this.dialogVisible = false;
+      console.log('新建会议室');
+    },
+    handleClose() {
+        this.dialogVisible = false;
+    },
+    submitNewRoom(formName){
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   }
 }
@@ -160,6 +256,14 @@ export default {
     height: 100%;	
     margin: 0 auto;
     position: fixed;
+  }
+  .room-add{
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    text-align: right;
+  }
+  .add-button{
+    margin-right: 3%;
   }
   
 </style>
