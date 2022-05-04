@@ -18,7 +18,7 @@
         </el-button>
       </div>
       <LogInButton v-if="login==0"></LogInButton>
-      <Personal-Button v-else-if="login==1" class="personal-button"></Personal-Button>
+      <PersonalButton v-else-if="login==1"></PersonalButton>
       <!-- <component :is="showWhat"></component> -->
       </el-row>
   </div>
@@ -65,7 +65,4 @@ export default {
     margin:1% 1% 1% 1%;
     color:white;
   }
-  /* .personal-button{
-    width: 10%;
-  } */
 </style>

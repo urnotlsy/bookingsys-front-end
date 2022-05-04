@@ -1,18 +1,20 @@
 <template>
-    <div id="PersonalButton">
-        <el-dropdown>
-            <el-button 
-                type="info" 
-                class="button" 
-                icon="el-icon-user"
-                circle>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>修改信息</el-dropdown-item>
-                <el-dropdown-item>退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-        </el-dropdown>
-    </div>
+  <div style="margin-right:10%">
+    <el-button
+      class="button"
+      type="info"
+      @click="logOut">
+      退出登录
+    </el-button>
+    <el-button 
+      icon="el-icon-user"
+      class="button" 
+      type="text" 
+      @click="goToPersonal">
+      个人中心
+    </el-button>
+    
+  </div>
 </template>
 
 <script>
@@ -24,9 +26,12 @@ export default {
     }
   },
   methods:{
-    //登录
-    logIn(){
-      this.$router.push('/login')
+    //个人中心
+    goToPersonal(){
+      this.$router.push('/personal')
+    },
+    logOut(){
+      //退出登录
     }
   }
   
@@ -34,13 +39,10 @@ export default {
 </script>
 
 <style scoped>
-#PersonalButton{
-    /* width: 10%;
-    background: black; */
-}
 .button{
+    margin:1% 1% 1% 1%;
+    color:white;
     float: right;
-    margin-right: 10px;
-}
+  }
   
 </style>
