@@ -44,6 +44,11 @@ const routes=[
         path:'/personal',
         name:'personal',
         component: () => import('../pages/PersonalCenter.vue')
+    },
+    {
+        path:'/account',
+        name:'account',
+        component: () => import('../pages/AccountManagement.vue')
     }
 ]
 

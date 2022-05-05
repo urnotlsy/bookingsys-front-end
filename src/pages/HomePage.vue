@@ -15,11 +15,11 @@
           {{item.key+'. '+item.rule}}
         </div>
       </el-card>
-      <div class="main-options">
+      <div class="admin-options">
         <el-card 
           class="options-card" 
           shadow="hover" 
-          style="background:#409EFF">
+          style="background:#326199">
           <el-button 
             class="card-button" 
             type="text" 
@@ -31,7 +31,7 @@
         <el-card 
           class="options-card" 
           shadow="hover" 
-          style="background:#67C23A">
+          style="background:#4FB1A1">
           <el-button 
             class="card-button" 
             type="text" 
@@ -43,7 +43,7 @@
         <el-card 
           class="options-card" 
           shadow="hover" 
-          style="background:#E6A23C">
+          style="background:#FCC055">
           <el-button 
             class="card-button" 
             type="text" 
@@ -55,14 +55,27 @@
         <el-card 
           class="options-card" 
           shadow="hover" 
-          style="background:#F56C6C">
+          style="background:#EB8D50">
           <el-button 
             class="card-button" 
             type="text"
             @click="addOrder">
             查看
           </el-button>
-          <h1 class="card-content">{{role=='2'?'改名了':'会议室预定'}}</h1>
+          <h1 class="card-content">会议室预定</h1>
+        </el-card>
+        <el-card 
+          class="options-card" 
+          shadow="hover" 
+          style="background:#DF6E5B"
+          v-if="role==3">
+          <el-button 
+            class="card-button" 
+            type="text"
+            @click="manageAccount">
+            查看
+          </el-button>
+          <h1 class="card-content">账号管理</h1>
         </el-card>
       </div>
     </div>  
@@ -79,7 +92,7 @@ export default {
   data () {
     return {
       //调试用，之后用全局变量
-      role:'1',      //1用户，2物业，3管理员
+      role:'3',      //1用户，2物业，3管理员
       login:'0',
 
       rules:[{
@@ -118,6 +131,9 @@ export default {
     },
     addOrder(){
       this.$router.replace({name:'order'})
+    },
+    manageAccount() {
+      this.$router.replace({name:'account'})
     }
   }
 }
@@ -148,6 +164,10 @@ export default {
   }
   .main-options {
     margin: 3% 10% 3% 0%;
+    float: right;
+  }
+  .admin-options{
+    margin: 2% 10% 2% 0%;
     float: right;
   }
   .options-card{

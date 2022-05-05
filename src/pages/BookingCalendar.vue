@@ -102,7 +102,7 @@ export default {
   data () {
     return {
       //调试用，之后用全局变量
-      role:'1',      //1用户，2物业，3管理员
+      role:'3',      //1用户，2物业，3管理员
 
       //顶部选择器
       roomValue:'',

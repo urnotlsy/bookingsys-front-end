@@ -33,7 +33,8 @@
               prop="capacity">
               <el-input 
                 v-model="newRoom.capacity"
-                placeholder="请输入会议室可容纳人数">
+                placeholder="请输入会议室可容纳人数"
+                type="number">
               </el-input>
             </el-form-item>
             <el-form-item 
@@ -209,7 +210,7 @@ export default {
       },
       rules:{
         number:[{required: true, message: '请输入会议室编号', trigger: 'blur'}],
-        capacity:[{type:'number', required: true, message: '请输入会议室容量', trigger: 'blur'}],
+        capacity:[{required: true, message: '请输入会议室容量', trigger: 'blur'}],
         intro:[{max: 200, message:'字符控制在200个以内',trigger: 'blur'}]
       }
     }
@@ -237,6 +238,7 @@ export default {
         if (valid) {
           alert('submit!');
         } else {
+          console.log(this.newRoom.capacity)
           console.log('error submit!!');
           return false;
         }
