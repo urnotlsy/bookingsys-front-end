@@ -3,12 +3,15 @@
         <span class="head-line">使用记录</span>
         <el-form 
             :model="recordForm" 
-            label-width="18%" 
+            label-width="12%" 
             class="demo-ruleForm">
             <el-form-item 
-                label="是否有违规行为" 
+                label="违规行为" 
                 prop="illegal">
-                <el-switch v-model="recordForm.illegal"></el-switch>
+                <el-switch 
+                    v-model="recordForm.illegal"
+                    active-text="有"
+                    inactive-text="无"></el-switch>
             </el-form-item>
             <el-form-item 
                 label="记录" 

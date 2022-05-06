@@ -15,6 +15,12 @@
             :value="item.label">
           </el-option>
         </el-select>
+        <el-button 
+          @click="clickToOrder" 
+          type="primary" 
+          style="margin-left:10px">
+          预约会议室
+        </el-button>
       </div>
       <div class="calendar">
         <FullCalendar 
@@ -168,6 +174,7 @@ export default {
           title: `会议:2xxxxxxxx`,
           start: '2022-05-04' + 'T08:15:00',
           end: '2022-05-04' + 'T22:00:00',
+          // backgroundColor:'red',
           extendedProps: {
             name:'fkjfb',
             number: '12388886666'
@@ -220,6 +227,9 @@ export default {
     },
     changeRoom(value){
       console.log(value)
+    },
+    clickToOrder(){
+      this.$router.push({name:'order',params: {number:this.roomValue}})
     }
   }
 }

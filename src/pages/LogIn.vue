@@ -2,7 +2,14 @@
   <div id="login">
     <HeaderMenu/>
       <el-card class="card">
-        <el-form ref="form" :model="form" label-width="80px">
+        <span class="tittle">
+          请登录
+        </span>
+        <el-form 
+          ref="form" 
+          :model="form" 
+          label-width="80px"
+          class="form">
           <el-form-item label="账号">
             <el-input v-model="form.id"></el-input>
           </el-form-item>
@@ -61,5 +68,12 @@ export default {
     margin-top: 5%;
     text-align: center;
     padding: 3% 3% 0 0;
+  }
+  .tittle{
+    font-size: 20px;
+    font-weight: bold;
+  }
+  .form{
+    margin-top: 20px;
   }
 </style>

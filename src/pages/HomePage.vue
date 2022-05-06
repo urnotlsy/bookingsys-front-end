@@ -6,7 +6,7 @@
         <div 
           slot="header" 
           class="clearfix">
-          <span style="font-weight:bold">会议室预约、使用规定</span>
+          <span style="font-weight:bold; font-size: 20px">会议室预约、使用规定</span>
         </div>
         <div 
           v-for="item in rules" 
@@ -16,67 +16,42 @@
         </div>
       </el-card>
       <div class="admin-options">
-        <el-card 
-          class="options-card" 
-          shadow="hover" 
-          style="background:#326199">
-          <el-button 
-            class="card-button" 
-            type="text" 
-            @click="checkCalendar">
-            查看
-          </el-button>
-          <h1 class="card-content">预约日历</h1>
-        </el-card>
-        <el-card 
-          class="options-card" 
-          shadow="hover" 
-          style="background:#4FB1A1">
-          <el-button 
-            class="card-button" 
-            type="text" 
-            @click="checkList">
-            查看
-          </el-button>
-          <h1 class="card-content">预约列表</h1>
-        </el-card>
-        <el-card 
-          class="options-card" 
-          shadow="hover" 
-          style="background:#FCC055">
-          <el-button 
-            class="card-button" 
-            type="text" 
-            @click="checkRoom">
-            查看
-          </el-button>
-          <h1 class="card-content">会议室详细信息</h1>
-        </el-card>
-        <el-card 
-          class="options-card" 
-          shadow="hover" 
-          style="background:#EB8D50">
-          <el-button 
-            class="card-button" 
-            type="text"
-            @click="addOrder">
-            查看
-          </el-button>
-          <h1 class="card-content">会议室预定</h1>
-        </el-card>
-        <el-card 
-          class="options-card" 
-          shadow="hover" 
-          style="background:#DF6E5B"
-          v-if="role==3">
-          <el-button 
-            class="card-button" 
-            type="text"
-            @click="manageAccount">
-            查看
-          </el-button>
-          <h1 class="card-content">账号管理</h1>
-        </el-card>
+        <el-button 
+          class="option-button cal-button" 
+          @click="checkCalendar">
+          <h1 class="card-content">
+            预约日历
+          </h1>
+        </el-button>
+        <el-button 
+          class="option-button list-button" 
+          @click="checkList">
+          <h1 class="card-content">
+            预约列表
+          </h1>
+        </el-button>
+        <el-button 
+          class="option-button info-button" 
+          @click="checkRoom">
+          <h1 class="card-content">
+            会议室详细信息
+          </h1>
+        </el-button>
+        <el-button 
+          class="option-button order-button" 
+          @click="addOrder">
+          <h1 class="card-content">
+            会议室预定
+          </h1>
+        </el-button>
+        <el-button 
+          class="option-button account-button" 
+          v-if="role==3"
+          @click="manageAccount">
+          <h1 class="card-content">
+            账号管理
+          </h1>
+        </el-button>
       </div>
     </div>  
   </div>
@@ -151,36 +126,41 @@ export default {
     display: flex;
   }
   .text {
-    font-size: 14px;
+    font-size: 16px;
   }
   .item {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     text-align: left;
   }
   .box-card {
-    width: 40%;
-    margin: 5% 15% 5% 15%;
+    width: 100%;
+    margin: 5% 8% 5% 8%;
     float: left;
   }
-  .main-options {
-    margin: 3% 10% 3% 0%;
-    float: right;
-  }
   .admin-options{
-    margin: 2% 10% 2% 0%;
+    margin: 2% 8% 2% 8%;
+    float: left;
+    width:40%;
+  }
+  .option-button{
+    width: 300px;
+    color: white;
+    margin: 3% 0 3% 0;
     float: right;
   }
-  .options-card{
-    width: 100%;
-    color: white;
-    margin: 5% 0 5% 0;
+  .cal-button{
+    background: #326199;
   }
-  .card-button{
-    float: right;
-    padding: 3px 0;
-    color: white;
+  .list-button{
+    background: #4FB1A1;
   }
-  .card-content{
-    float:left;
+  .info-button{
+    background:#FCC055;
+  }
+  .order-button{
+    background:#EB8D50;
+  }
+  .account-button{
+    background:#DF6E5B;
   }
 </style>

@@ -38,6 +38,14 @@
               </el-input>
             </el-form-item>
             <el-form-item 
+              label="多媒体设备" 
+              prop="media">
+              <el-switch 
+                v-model="newRoom.media"
+                active-text="有"
+                inactive-text="无"></el-switch>
+            </el-form-item>
+            <el-form-item 
               label="简介" 
               prop="intro">
               <el-input 
@@ -69,6 +77,21 @@
             prop="capacity"
             label="容量"
             width="100">
+          </el-table-column>
+          <el-table-column
+            prop="media"
+            label="多媒体设备"
+            width="120"
+            :filters="[{text:'有',value:true},{text:'无',value:false}]"
+            :filter-method="filterTag"
+            filter-placement="bottom-end">
+            <template slot-scope="scope">
+              <el-tag
+                :type="scope.row.media==true? 'success':'danger'"
+                disable-transitions>
+                {{scope.row.media == true ? '有':'无'}}
+              </el-tag>
+            </template>
           </el-table-column>
           <el-table-column
             prop="intro"
@@ -133,72 +156,84 @@ export default {
           id:1,
           number:441,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:2,
           number:441,
           capacity:20,
+          media:false,
           intro:'hhhhh'
         },
         {
           id:3,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:4,
           number:403,
           capacity:20,
+          media:false,
           intro:'hhhhh'
         },
         {
           id:5,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:6,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:7,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:8,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:9,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:10,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:11,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         },
         {
           id:12,
           number:403,
           capacity:20,
+          media:true,
           intro:'hhhhh'
         }
       ],
@@ -206,6 +241,7 @@ export default {
       newRoom:{
         number:'',
         capacity:'',
+        media:'',
         intro:''
       },
       rules:{
@@ -216,6 +252,13 @@ export default {
     }
   },
   methods:{
+    filterTag(value, row) {
+      return row.media === value;
+    },
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
+    },
     clickToCalendar(id) {
       // console.log(id);
       this.$router.push({name:'calendar',params: {id:id}}) // 只能用 name

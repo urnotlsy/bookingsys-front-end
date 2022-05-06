@@ -79,11 +79,15 @@
               placeholder="不超过50字的会议主题">
             </el-input>
         </el-form-item>
-        <el-form-item label="是否涉及意识形态">
-            <el-switch v-model="ruleForm.flag"></el-switch>
-            <span style="color: grey">
-              【注意】：如果会议内容涉及意识形态领域，务请在会前经学院党委审核。
-            </span>
+        <el-form-item label="涉及意识形态">
+          <el-switch 
+            v-model="ruleForm.flag"
+            active-text="有"
+            inactive-text="无">
+          </el-switch>
+          <span style="color: grey">
+            【注意】：如果会议内容涉及意识形态领域，务请在会前经学院党委审核。
+          </span>
         </el-form-item>
         <el-form-item 
           label="备注" 
