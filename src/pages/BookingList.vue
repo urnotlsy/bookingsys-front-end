@@ -8,12 +8,7 @@
         <el-button 
           type="primary" 
           class="export-button">
-          导出预约记录
-        </el-button>
-        <el-button 
-          type="primary" 
-          class="export-button">
-          导出使用记录
+          导出会议记录
         </el-button>
       </div>
       <el-card 
@@ -231,7 +226,7 @@ export default {
   data(){
     return{
       //调试用，之后用全局变量
-      role:'1',      //1用户，2物业，3管理员
+      role:'3',      //1用户，2物业，3管理员
 
       tableData: [{
           id:1234,

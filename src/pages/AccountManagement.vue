@@ -108,43 +108,8 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="illegal"
-                    label="违规次数"
-                    sortable>
-                </el-table-column>
-                <el-table-column
-                    prop="blacklist"
-                    label="黑名单"
-                    :filters="[{ text: '是', value: true }, { text: '否', value: false }]"
-                    :filter-method="filterBlacklist"
-                    filter-placement="bottom-end">
-                    <template slot-scope="scope">
-                        <el-tag
-                            :type="scope.row.blacklist == true ?  'danger' : 'success'"
-                            disable-transitions>
-                            {{scope.row.blacklist == true ? '是' : '否'}}
-                        </el-tag>
-                    </template>
-                </el-table-column>
-                <el-table-column
                     label="操作">
                     <template slot-scope="scope">
-                        <el-button 
-                            v-if="scope.row.blacklist==true"
-                            @click="removeBlacklist(scope.row)" 
-                            type="primary" 
-                            plain
-                            size="small">
-                            解除黑名单
-                        </el-button>
-                        <el-button 
-                            v-if="scope.row.blacklist==false"
-                            @click="addBlacklist(scope.row)" 
-                            type="warning" 
-                            plain
-                            size="small">
-                            加入黑名单
-                        </el-button>
                         <el-button 
                             @click="deleteAccount(scope.row)" 
                             type="danger" 
@@ -182,36 +147,26 @@ export default {
                 name:'小王',
                 number:'13566778877',
                 character:1,
-                blacklist:false,
-                illegal:'0',
             },{
                 id:'1753886',
                 name:'刘一一',
                 number:'17688997777',
                 character:1,
-                blacklist:false,
-                illegal:'1',
             },{
                 id:'1553998',
                 name:'王田',
                 number:'15366778877',
                 character:2,
-                blacklist:false,
-                illegal:'0',
             },{
                 id:'1253886',
                 name:'李一',
                 number:'17688997777',
                 character:3,
-                blacklist:false,
-                illegal:'0',
             },{
                 id:'1853886',
                 name:'张亮',
                 number:'17655897777',
                 character:1,
-                blacklist:true,
-                illegal:'3',
             }
         ]
     }
@@ -226,12 +181,6 @@ export default {
         filterHandler(value, row, column) {
             const property = column['property'];
             return row[property] === value;
-        },
-        removeBlacklist(row){
-            console.log('解除'+row.id);
-        },
-        addBlacklist(row){
-            console.log('加入'+row.id);
         },
         deleteAccount(row){
             this.$confirm('此操作将永久注销该账号, 是否继续?', '提示', {

@@ -6,19 +6,12 @@
             label-width="12%" 
             class="demo-ruleForm">
             <el-form-item 
-                label="违规行为" 
-                prop="illegal">
-                <el-switch 
-                    v-model="recordForm.illegal"
-                    active-text="有"
-                    inactive-text="无"></el-switch>
-            </el-form-item>
-            <el-form-item 
                 label="记录" 
                 prop="record">
                 <el-input 
-                    type="textarea" 
-                    v-model="recordForm.record">
+                    type="textarea"
+                    placeholder="对会议室使用情况做简单记录" 
+                    v-model="record">
                 </el-input>
             </el-form-item>
             <el-form-item>
@@ -38,10 +31,8 @@ export default{
     name:'RecordForm',
     data(){
         return{
-            recordForm:{
-                illegal:false,
-                record:''
-            }
+            record:''
+            
         }
     },
     methods:{

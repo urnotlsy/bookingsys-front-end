@@ -2,19 +2,7 @@
   <div id="homepage">
     <HeaderMenu/>
     <div class="main">
-      <el-card class="box-card">
-        <div 
-          slot="header" 
-          class="clearfix">
-          <span style="font-weight:bold; font-size: 20px">会议室预约、使用规定</span>
-        </div>
-        <div 
-          v-for="item in rules" 
-          v-bind:key="item.key" 
-          class="text item">
-          {{item.key+'. '+item.rule}}
-        </div>
-      </el-card>
+      
       <div class="admin-options">
         <el-button 
           class="option-button cal-button" 
@@ -53,6 +41,27 @@
           </h1>
         </el-button>
       </div>
+      <el-card class="box-card">
+        <div 
+          slot="header" 
+          class="clearfix">
+          <span style="font-weight:bold; font-size: 20px">会议室使用管理办法</span>
+        </div>
+        <el-button type="info" class="download-button">下载文件</el-button>
+        <el-upload
+          v-if="role==3"
+          class="upload-demo"
+          action="https://jsonplaceholder.typicode.com/posts/"
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :limit="1"
+          :on-exceed="handleExceed"
+          :file-list="fileList">
+          <el-button type="primary" style="margin-top:10px">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+        </el-upload>
+      </el-card>
     </div>  
   </div>
 </template>
@@ -69,29 +78,8 @@ export default {
       //调试用，之后用全局变量
       role:'3',      //1用户，2物业，3管理员
       login:'0',
-
-      rules:[{
-        rule:'会议室实行网上预约使用与管理。',
-        key:1
-      },{
-        rule:'会议室预约时段为：8:00-22:00，原则上单次使用不超过3小时，超时段使用应在预约登记时做好备注说明。',
-        key:2
-      },{
-        rule:'预约者应按预约时间使用会议室，未按时到达或超时影响他人使用会议室的，记违规一次。',
-        key:3
-      },{
-        rule:'使用人应爱护公物、节约资源，在使用完毕后关闭会议室内的灯和多媒体设备等，未按规定使用会议室的，记违规一次。',
-        key:4
-      },{
-        rule:'如会议室设备使用前发生故障、损坏或配件丢失，需及时告知物业或管理员，未及时上报的，发现后责任一律由最后使用人承担。',
-        key:5
-      },{
-        rule:'违规次数达到上限后，账号一个月内将无法使用预约功能。',
-        key:6
-      },{
-        rule:'其他特殊情况或特殊需要用户可联系管理员张晶老师。',
-        key:7
-      }]
+      fileList:''
+      
     }
   },
   methods:{
@@ -109,6 +97,18 @@ export default {
     },
     manageAccount() {
       this.$router.replace({name:'account'})
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+    },
+    beforeRemove(file, fileList) {
+      return this.$confirm(`确定移除 ${ file.name }？`);
     }
   }
 }
@@ -125,20 +125,8 @@ export default {
   .main {
     display: flex;
   }
-  .text {
-    font-size: 16px;
-  }
-  .item {
-    margin-bottom: 20px;
-    text-align: left;
-  }
-  .box-card {
-    width: 100%;
-    margin: 5% 8% 5% 8%;
-    float: left;
-  }
   .admin-options{
-    margin: 2% 8% 2% 8%;
+    margin: 3% 5% 3% 15%;
     float: left;
     width:40%;
   }
@@ -163,4 +151,15 @@ export default {
   .account-button{
     background:#DF6E5B;
   }
+  .box-card {
+    width: 100%;
+    margin: 8% 15% 5% 10%;
+    float: left;
+    height: 100%;
+  }
+  /* .download-button{
+    width: 300px;
+    color: white;
+    height: 60px;
+  } */
 </style>
