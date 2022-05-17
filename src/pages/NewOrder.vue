@@ -95,7 +95,8 @@
             <el-input 
               v-model="ruleForm.note" 
               type="textarea"
-              placeholder="若有任何问题，请在此处留言">
+              placeholder="若有任何问题，请在此处留言"
+              maxlength="200">
             </el-input>
         </el-form-item>
         <el-form-item>

@@ -11,7 +11,8 @@
                 <el-input 
                     type="textarea"
                     placeholder="对会议室使用情况做简单记录" 
-                    v-model="record">
+                    v-model="record"
+                    maxlength="200">
                 </el-input>
             </el-form-item>
             <el-form-item>
