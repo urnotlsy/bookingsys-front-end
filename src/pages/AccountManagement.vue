@@ -21,10 +21,10 @@
                     ref="newAccount">
                     <el-form-item 
                         label="学号/工号" 
-                        prop="id"
+                        prop="user_id"
                         required>
                         <el-input 
-                            v-model="newAccount.id"
+                            v-model="newAccount.user_id"
                             placeholder="请输入学号或工号"
                             type="number">
                         </el-input>
@@ -40,30 +40,20 @@
                     </el-form-item>
                     <el-form-item 
                         label="联系方式" 
-                        prop="number">
+                        prop="phone">
                         <el-input 
-                            v-model="newAccount.number"
+                            v-model="newAccount.phone"
                             placeholder="请输入联系方式">
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item 
-                        label="初始密码" 
-                        prop="pass"
-                        required>
-                        <el-input 
-                            v-model="newAccount.pass"
-                            placeholder="请输入初始密码"
-                            show-password>
                         </el-input>
                     </el-form-item>
                     <el-form-item
                         label="角色权限" 
-                        prop="character"
+                        prop="role"
                         required>
                         <template>
-                            <el-radio v-model="newAccount.character" label="1">用户</el-radio>
-                            <el-radio v-model="newAccount.character" label="2">物业</el-radio>
-                            <el-radio v-model="newAccount.character" label="3">管理员</el-radio>
+                            <el-radio v-model="newAccount.role" label="user">用户</el-radio>
+                            <el-radio v-model="newAccount.role" label="guard">物业</el-radio>
+                            <el-radio v-model="newAccount.role" label="admin">管理员</el-radio>
                         </template>                                                         
                     </el-form-item>
                     <el-form-item>
@@ -76,12 +66,12 @@
         <el-card class="card">
             <el-table
                 ref="filterTable"
-                :data="accountData"
+                :data="accountData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
                 border
-                height="650"
+                height="550"
                 style="width: 100%">
                 <el-table-column
-                    prop="id"
+                    prop="user_id"
                     label="学号/工号"
                     sortable>
                 </el-table-column>
@@ -90,26 +80,36 @@
                     label="姓名">
                 </el-table-column>
                 <el-table-column
-                    prop="number"
+                    prop="phone"
                     label="联系方式">
                 </el-table-column>
                 <el-table-column
-                    prop="character"
+                    prop="role"
                     label="角色"
-                    :filters="[{ text: '用户', value: 1 }, { text: '物业', value: 2 }, { text: '管理员', value: 3 }]"
+                    :filters="[{ text: '用户', value: 'user' }, { text: '物业', value: 'guard' }, { text: '管理员', value: 'admin' }]"
                     :filter-method="filterChar"
                     filter-placement="bottom-end">
                     <template slot-scope="scope">
                     <el-tag
-                        :type="scope.row.character == 1 ? 'primary' : scope.row.character == 2 ? 'success' : 'warning'"
+                        :type="scope.row.role == 'user' ? 'primary' : scope.row.role == 'guard' ? 'success' : 'warning'"
                         disable-transitions>
-                        {{scope.row.character == 1 ? '用户' : scope.row.character == 2 ? '物业' : '管理员'}}
+                        {{scope.row.role == 'user' ? '用户' : scope.row.role == 'guard' ? '物业' : '管理员'}}
                     </el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column
-                    label="操作">
+                <el-table-column>
+                    <template slot="header" slot-scope="scope">
+                        <el-input
+                        v-model="search"
+                        placeholder="输入姓名搜索"/>
+                    </template>
                     <template slot-scope="scope">
+                        <el-button 
+                            @click="resetPass(scope.row)" 
+                            type="primary" 
+                            size="small">
+                            重置密码
+                        </el-button>
                         <el-button 
                             @click="deleteAccount(scope.row)" 
                             type="danger" 
@@ -119,6 +119,15 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+            </el-pagination>
         </el-card>
     </div>
   </div>
@@ -126,6 +135,7 @@
 
 <script>
 import HeaderMenu from '../components/HeaderMenu.vue'
+import axios from 'axios'
 
 export default {
   name: 'AccountManagement',
@@ -136,74 +146,113 @@ export default {
     return{
         dialogVisible:false,
         newAccount:{
-            id:'',
+            user_id:'',
             name:'',
-            number:'',
-            pass:'',
-            character:''
+            phone:'',
+            role:''
         },
-        accountData:[{
-                id:'1653998',
-                name:'小王',
-                number:'13566778877',
-                character:1,
-            },{
-                id:'1753886',
-                name:'刘一一',
-                number:'17688997777',
-                character:1,
-            },{
-                id:'1553998',
-                name:'王田',
-                number:'15366778877',
-                character:2,
-            },{
-                id:'1253886',
-                name:'李一',
-                number:'17688997777',
-                character:3,
-            },{
-                id:'1853886',
-                name:'张亮',
-                number:'17655897777',
-                character:1,
-            }
-        ]
+        accountData:[],
+        search: '',
+        currentPage: 1,
+        pageSize: 5,
+        total:0,
     }
   },
+  //创建页面时调用的函数
+  created(){
+      this.getAcoount();
+  },
   methods:{
-        filterChar(value, row) {
-            return row.character === value;
+        //查询账号数据
+        getAcoount(){
+            axios.get("http://localhost:9090/user/page",{
+                params:{
+                    pageNum: this.currentPage,
+                    pageSize: this.pageSize
+                }
+            }).then((res)=>{
+                this.accountData=res.data.data
+                this.total=res.data.total
+            }).catch(function (error){
+                console.log(error)
+            })
         },
-        filterBlacklist(value, row) {
-            return row.blacklist === value;
+        //分页
+        handleSizeChange(val) {
+            this.pageSize=val;
+            this.getAcoount();
+        },
+        handleCurrentChange(val) {
+            this.currentPage=val;
+            this.getAcoount();
+        },
+        //表格筛选
+        filterChar(value, row) {
+            return row.role === value;
         },
         filterHandler(value, row, column) {
             const property = column['property'];
             return row[property] === value;
         },
+        //重置密码
+        resetPass(row){
+            axios.get("http://localhost:9090/user/reset",{
+                params:{
+                    user_id:row.user_id
+                }
+            }).then(()=>{
+                this.$message({
+                    type: 'info',
+                    message: '已重置密码'
+                });
+            }).catch(function (error){
+                console.log(error)
+            })
+        },
+        //注销账号
         deleteAccount(row){
             this.$confirm('此操作将永久注销该账号, 是否继续?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                console.log('注销'+row.id);
+                axios
+                .delete("http://localhost:9090/user/"+row.user_id)
+                .catch(function (error){
+                    console.log(error)
+                })
+                location. reload()     //删除账号以后刷新页面
             }).catch(() => {
                 this.$message({
                     type: 'info',
-                    message: '已取消删除'
+                    message: '已取消'
                 });          
             });
         },
         handleClose() {
             this.dialogVisible = false;
         },
+        //添加新帐号
         submitNewAccount(formName){
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     console.log(this.newAccount);
-                    alert('submit!');
+                    axios({url:'http://localhost:9090/user/insert',
+                        method:'post',
+                        data:{
+                            user_id: this.newAccount.user_id,
+                            name: this.newAccount.name,
+                            phone: this.newAccount.phone,
+                            role: this.newAccount.role
+                        }
+                    }).then(()=>{
+                        this.$message({
+                            type: 'info',
+                            message: '已成功添加'
+                        });
+                    }).catch(function (error){
+                        console.log(error)
+                    })
                 } else {
                     console.log('error submit!!');
                     return false;

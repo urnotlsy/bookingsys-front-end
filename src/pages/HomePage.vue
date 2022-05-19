@@ -57,7 +57,8 @@
           :before-remove="beforeRemove"
           :limit="1"
           :on-exceed="handleExceed"
-          :file-list="fileList">
+          >
+          <!-- :file-list="fileList" -->
           <el-button type="primary" style="margin-top:10px">点击上传</el-button>
           <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
         </el-upload>
@@ -78,7 +79,7 @@ export default {
       //调试用，之后用全局变量
       role:'3',      //1用户，2物业，3管理员
       login:'0',
-      fileList:''
+      // fileList:''
       
     }
   },
@@ -107,7 +108,7 @@ export default {
     handleExceed(files, fileList) {
       this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
     },
-    beforeRemove(file, fileList) {
+    beforeRemove(file) {
       return this.$confirm(`确定移除 ${ file.name }？`);
     }
   }

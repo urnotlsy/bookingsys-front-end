@@ -13,9 +13,11 @@
     "@fullcalendar/interaction": "^5.11.0",
     "@fullcalendar/timegrid": "^5.11.0",
     "@fullcalendar/vue": "^5.11.0",
+    "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.8",
     "vue": "^2.6.14",
+    "vue-axios": "^3.4.1",
     "vue-router": "^3.5.2"
   },
   "devDependencies": {
