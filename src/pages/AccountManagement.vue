@@ -236,7 +236,6 @@ export default {
         submitNewAccount(formName){
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    console.log(this.newAccount);
                     axios({url:'http://localhost:9090/user/insert',
                         method:'post',
                         data:{

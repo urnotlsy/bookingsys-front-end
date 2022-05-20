@@ -22,9 +22,9 @@
             ref="newRoom">
             <el-form-item 
               label="会议室" 
-              prop="number">
+              prop="room_number">
               <el-input 
-                v-model="newRoom.number"
+                v-model="newRoom.room_number"
                 placeholder="请输入会议室编号">
               </el-input>
             </el-form-item>
@@ -69,7 +69,7 @@
           height="650"
           style="width: 100%">
           <el-table-column
-            prop="number"
+            prop="room_number"
             label="会议室"
             width="100">
           </el-table-column>
@@ -102,7 +102,7 @@
             width="160">
             <template slot-scope="scope">
               <el-button 
-                @click="clickToCalendar(scope.row.id)" 
+                @click="clickToCalendar(scope.row.room_id)" 
                 type="info" 
                 plain 
                 size="small">
@@ -115,7 +115,7 @@
             width="150">
             <template slot-scope="scope">
               <el-button 
-                @click="clickToOrder(scope.row.number)" 
+                @click="clickToOrder(scope.row.room_id)" 
                 type="primary" 
                 plain 
                 size="small"
@@ -123,7 +123,7 @@
                 预约会议室
               </el-button>
               <el-button 
-                @click="deleteRoom(scope.row.number)" 
+                @click="deleteRoom(scope.row.room_id)" 
                 type="danger" 
                 plain 
                 size="small"
@@ -140,6 +140,7 @@
 
 <script>
 import HeaderMenu from '../components/HeaderMenu.vue'
+import axios from 'axios'
 
 export default {
   name: 'RoomInfo',
@@ -151,97 +152,12 @@ export default {
       //调试用，之后用全局变量
       role:'3',      //1用户，2物业，3管理员
 
-      rooms:[
-        {
-          id:1,
-          number:441,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:2,
-          number:441,
-          capacity:20,
-          media:false,
-          intro:'hhhhh'
-        },
-        {
-          id:3,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:4,
-          number:403,
-          capacity:20,
-          media:false,
-          intro:'hhhhh'
-        },
-        {
-          id:5,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:6,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:7,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:8,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:9,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:10,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:11,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        },
-        {
-          id:12,
-          number:403,
-          capacity:20,
-          media:true,
-          intro:'hhhhh'
-        }
-      ],
+      rooms:[],
       dialogVisible: false,
       newRoom:{
-        number:'',
+        room_number:'',
         capacity:'',
-        media:'',
+        media:true,
         intro:''
       },
       rules:{
@@ -251,7 +167,21 @@ export default {
       }
     }
   },
+  //创建页面时调用的函数
+  created(){
+    this.getRoom();
+  },
   methods:{
+    //查询会议室信息，会议室不多所以不分页
+    getRoom(){
+      axios.get("http://localhost:9090/room",{
+      }).then((res)=>{
+          this.rooms=res.data
+      }).catch(function (error){
+          console.log(error)
+      })
+    },
+    //表格筛选功能
     filterTag(value, row) {
       return row.media === value;
     },
@@ -266,9 +196,26 @@ export default {
     clickToOrder(number){
       this.$router.push({name:'order',params: {number:number}})
     },
-    deleteRoom(number){
-      console.log('删除'+number);
+    //删除会议室
+    deleteRoom(room_id){
+      this.$confirm('此操作将删除该会议室, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        axios.delete("http://localhost:9090/room/"+room_id)
+        .catch(function (error){
+          console.log(error)
+        })
+        location. reload()     //删除以后刷新页面
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });          
+      });
     },
+    //添加会议室
     addRoom(){
       this.dialogVisible = false;
       console.log('新建会议室');
@@ -279,10 +226,25 @@ export default {
     submitNewRoom(formName){
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          axios({url:'http://localhost:9090/room/insert',
+            method:'post',
+            data:{
+              room_number: this.newRoom.room_number,
+              capacity: this.newRoom.capacity,
+              media: this.newRoom.media,
+              intro: this.newRoom.intro
+            }
+          }).then(()=>{
+              this.$message({
+                  type: 'info',
+                  message: '已成功添加'
+              });
+              location. reload()     //新建以后刷新页面
+          }).catch(function (error){
+              console.log(error)
+          })
         } else {
-          console.log(this.newRoom.capacity)
-          console.log('error submit!!');
+          alert('error submit!!');
           return false;
         }
       });
