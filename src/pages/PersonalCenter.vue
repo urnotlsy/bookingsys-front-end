@@ -5,7 +5,7 @@
             <el-form
                 :model="userInfo"
                 :rules="rules"
-                ref="ruleForm" 
+                ref="userInfo" 
                 label-width="10%" 
                 class="userInfo">
                 <el-form-item
@@ -18,9 +18,9 @@
                 </el-form-item>
                 <el-form-item 
                     label="联系方式" 
-                    prop="number">
+                    prop="phone">
                     <el-input 
-                        v-model="userInfo.number"
+                        v-model="userInfo.phone"
                         placeholder="请输入手机号码">
                     </el-input>
                 </el-form-item>
@@ -57,6 +57,7 @@
 
 <script>
 import HeaderMenu from '../components/HeaderMenu.vue'
+import axios from 'axios'
 
 export default{
     name:'PersonalCenter',
@@ -66,33 +67,31 @@ export default{
     data(){
         var validatePass = (rule, value, callback) => {
             if (value === '') {
-            callback(new Error('请输入密码'));
+                callback(new Error('请输入密码'));
             } else {
-            if (this.userInfo.checkPass !== '') {
-                this.$refs.ruleForm.validateField('checkPass');
-            }
-            callback();
+                callback();
             }
         };
         var validatePass2 = (rule, value, callback) => {
             if (value === '') {
-            callback(new Error('请再次输入密码'));
+                callback(new Error('请再次输入密码'));
             } else if (value !== this.userInfo.pass) {
-            callback(new Error('两次输入密码不一致!'));
+                callback(new Error('两次输入密码不一致!'));
             } else {
-            callback();
+                callback();
             }
         };
         return{
             userInfo:{
+                user_id: 11,
                 name:'',
-                number:'',
+                phone:'',
                 pass:'',
                 checkPass:''
             },
             rules:{
                 name:[{required: true, message: '请输入姓名', trigger: 'blur'}],
-                number:[{required: true, message: '请输入手机号码', trigger: 'blur'}],
+                phone:[{required: true, message: '请输入手机号码', trigger: 'blur'}],
                 pass: [{ validator: validatePass, trigger: 'blur' }],
                 checkPass: [{ validator: validatePass2, trigger: 'blur' }],
             }
@@ -103,9 +102,24 @@ export default{
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    alert('submit!');
+                    axios({url:'http://localhost:9090/user/update',
+                        method:'post',
+                        data:{
+                            user_id: this.userInfo.user_id,
+                            name: this.userInfo.name,
+                            phone: this.userInfo.phone,
+                            password: this.userInfo.pass
+                        }
+                    }).then(()=>{
+                        this.$message({
+                            type: 'info',
+                            message: '已成功修改'
+                        });
+                    }).catch(function (error){
+                        console.log(error)
+                    })
                 } else {
-                    console.log('error submit!!');
+                    alert('error submit!!');
                     return false;
                 }
             });

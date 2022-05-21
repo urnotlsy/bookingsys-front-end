@@ -18,7 +18,7 @@
                     v-for="item in rooms"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.label">
+                    :value="item.value">
                 </el-option>
             </el-select>
         </el-form-item>
@@ -26,16 +26,18 @@
             label="姓名" 
             prop="name">
             <el-input 
-              v-model="ruleForm.name"
-              placeholder="请输入姓名">
+              v-model="user_name"
+              :placeholder="user_name"
+              :disabled="true">
             </el-input>
         </el-form-item>
         <el-form-item 
             label="联系方式" 
-            prop="number">
+            prop="phone">
             <el-input 
-              v-model="ruleForm.number"
-              placeholder="请输入手机号码">
+              v-model="user_phone"
+              :placeholder="user_phone"
+              :disabled="true">
               </el-input>
         </el-form-item>
         <span class="notes">
@@ -113,14 +115,12 @@
 
 <script>
 import HeaderMenu from '../components/HeaderMenu.vue'
+import axios from 'axios'
 
 export default {
   name: 'NewOrder',
   components: {
     HeaderMenu
-  },
-  created(){
-    this.ruleForm.room=this.$route.params.number;
   },
   data(){
     var checkDate = (rule,value,callback) => {
@@ -133,6 +133,8 @@ export default {
         callback(new Error('不能预约过去的时间'));
       }else if(gapDays>30){
         callback(new Error('只能预约30天内的时间'))
+      }else{
+        callback();
       }
     };
     var checkTime = (rule,value,callback) => {
@@ -151,23 +153,22 @@ export default {
         if(gapDays<0&&value[0]<=now){                               //预约日期在今天
           callback(new Error('不能预约过去的时间'));
         }
+        callback();
       }
     };
     return{
+      user_id:1,
+
       ruleForm:{
         room:'',
-        name:'',
-        number:'',
         date:'',
         time:'',
         theme:'',
-        flag:'',
+        flag:true,
         note:''
       },
       rules:{
         room:[{required: true, message: '请选择会议室', trigger: 'change'}],
-        name:[{required: true, message: '请输入姓名', trigger: 'blur'}],
-        number:[{required: true, message: '请输入手机号码', trigger: 'blur'}],
         date:[{type: 'date', required: true, message: '请选择日期', trigger: 'change'},
               {validator: checkDate, trigger: 'change'}],
         time:[{type: 'array', required: true, message: '请选择时间', trigger: 'change' },
@@ -175,30 +176,83 @@ export default {
         theme:[{max: 50, message: '长度不超过50个字符', trigger: 'blur'},
                 {required: true, message: '请输入主题', trigger: 'blur'}]
       },
-      rooms: [{
-        value: 1,
-        label: '黄金糕'
-        }, {
-        value: 2,
-        label: '双皮奶'
-        }, {
-        value: 3,
-        label: '蚵仔煎'
-        }, {
-        value: 4,
-        label: '龙须面'
-        }, {
-        value: 5,
-        label: '北京烤鸭'
-        }
-      ]
+      rooms: [],
+      user_name:'',
+      user_phone:''
     }
   },
+  //创建页面时调用的函数
+  created(){
+    this.getRoomNumber();
+    this.getUserInfo();
+    this.ruleForm.room=this.$route.params.number;
+  },
   methods:{
+    getRoomNumber(){
+      axios.get("http://localhost:9090/room/getNumber")
+      .then((res)=>{
+          this.rooms=res.data
+      }).catch(function (error){
+          console.log(error)
+      })
+    },
+    getUserInfo(){
+      axios.get("http://localhost:9090/user/getById",{
+        params:{
+          user_id:this.user_id
+        }
+      }).then((res)=>{
+          this.user_name=res.data.name
+          this.user_phone=res.data.phone
+      }).catch(function (error){
+          console.log(error)
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          //转换flag
+          let flag = 0;
+          if(this.ruleForm.flag == true){
+            flag = 1;
+          }
+          //转换开始时间
+          let hh=this.ruleForm.time[0].getHours();
+          let mm=this.ruleForm.time[0].getMinutes();
+          let ss=this.ruleForm.time[0].getSeconds();
+          let start=hh+':'+mm+':'+ss
+          //转换结束时间
+          hh=this.ruleForm.time[1].getHours();
+          mm=this.ruleForm.time[1].getMinutes();
+          ss=this.ruleForm.time[1].getSeconds();
+          let end=hh+':'+mm+':'+ss
+          //转换日期
+          let yy=this.ruleForm.date.getFullYear();
+          let month=this.ruleForm.date.getMonth()+1;
+          let day=this.ruleForm.date.getDate();
+          //调用接口创建
+          axios({url:'http://localhost:9090/order/insert',
+            method:'post',
+            data:{
+              user_id: this.user_id,
+              room_id: this.ruleForm.room,
+              theme: this.ruleForm.theme,
+              flag: flag,
+              note: this.ruleForm.note,
+              order_date: yy+'-'+month+'-'+day,
+              start_time: start,
+              end_time: end
+            }
+          }).then(()=>{
+                        this.$message({
+                            type: 'info',
+                            message: '已成功添加'
+                        });
+                        location. reload()     //新建账号以后刷新页面
+                    }).catch(function (error){
+                        console.log(error)
+                    })
+          
         } else {
           console.log('error submit!!');
           return false;

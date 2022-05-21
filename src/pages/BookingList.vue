@@ -11,9 +11,9 @@
           导出会议记录
         </el-button>
       </div>
+      
       <el-card 
-        class="card"
-        v-if="role==1||role==2">
+        class="admin-card">
         <el-table
           ref="filterTable"
           :data="tableData"
@@ -21,87 +21,12 @@
           height="650"
           style="width: 100%">
           <el-table-column
-            prop="id"
-            label="订单号"
-            width="100">
-          </el-table-column>
-          <el-table-column
             prop="name"
-            label="姓名"
-            width="100">
+            label="姓名">
           </el-table-column>
           <el-table-column
-            prop="number"
-            label="联系方式"
-            width="160">
-          </el-table-column>
-          <el-table-column
-            prop="theme"
-            label="主题">
-          </el-table-column>
-          <el-table-column
-            prop="room"
-            label="会议室"
-            width="100">
-          </el-table-column>
-          <el-table-column
-            prop="start"
-            label="开始时间"
-            width="200">
-          </el-table-column>
-          <el-table-column
-            prop="end"
-            label="结束时间"
-            width="200">
-          </el-table-column>
-          <el-table-column
-            prop="state"
-            label="状态"
-            width="110"
-            :filters="[{ text: '未审核', value: 1 }, { text: '已通过', value: 2 }, { text: '已失败', value: 3 }]"
-            :filter-method="filterTag"
-            filter-placement="bottom-end">
-            <template slot-scope="scope">
-              <el-tag
-                :type="scope.row.state == 1 ? 'info' : scope.row.state == 2 ? 'success' : 'danger'"
-                disable-transitions>{{scope.row.state == 1 ? '未审核' : scope.row.state == 2 ? '已通过' : '已失败'}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="120">
-            <template slot-scope="scope">
-              <el-button 
-                @click="handleClick(scope.row)" 
-                type="primary" 
-                plain 
-                size="small">
-                取消预约
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-      
-      <el-card 
-        class="admin-card"
-        v-else-if="role==3">
-        <el-table
-          ref="filterTable"
-          :data="adminTableData"
-          border
-          height="650"
-          style="width: 100%">
-          
-          <el-table-column
-            prop="name"
-            label="姓名"
-            width="80">
-          </el-table-column>
-          <el-table-column
-            prop="number"
-            label="联系方式"
-            width="120">
+            prop="phone"
+            label="联系方式">
           </el-table-column>
           <el-table-column
             prop="theme"
@@ -109,8 +34,7 @@
           </el-table-column>
           <el-table-column
             prop="flag"
-            label="涉及意识形态"
-            width="120">
+            label="涉及意识形态">
             <template slot-scope="scope">
               <el-tag
                 :type="scope.row.flag == true ?  'danger' : 'info'"
@@ -121,29 +45,29 @@
           </el-table-column>
           <el-table-column
             prop="note"
-            label="备注"
-            width="150">
+            label="备注">
           </el-table-column>
           <el-table-column
             prop="room"
-            label="会议室"
-            width="80">
+            label="会议室">
           </el-table-column>
           <el-table-column
-            prop="start"
+            prop="order_date"
+            label="日期"
+            sortable>
+          </el-table-column>
+          <el-table-column
+            prop="start_time"
             label="开始时间"
-            sortable
-            width="170">
+            sortable>
           </el-table-column>
           <el-table-column
-            prop="end"
-            label="结束时间"
-            width="170">
+            prop="end_time"
+            label="结束时间">
           </el-table-column>
           <el-table-column
             prop="state"
             label="状态"
-            width="90"
             :filters="[{ text: '未审核', value: 1 }, { text: '已通过', value: 2 }, { text: '已失败', value: 3 }]"
             :filter-method="filterTag"
             filter-placement="bottom-end">
@@ -156,8 +80,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="操作"
-            width="110">
+            label="操作">
             <template slot-scope="scope">
               <el-button 
                 @click="handleClick(scope.row)" 
@@ -170,7 +93,8 @@
           </el-table-column>
           <el-table-column
             label="审批"
-            width="150">
+            width="150"
+            v-if="role==3">
             <template slot-scope="scope">
               <el-button 
                 @click="passClick(scope.row)" 
@@ -196,13 +120,26 @@
 
 <script>
 import HeaderMenu from '../components/HeaderMenu.vue'
+import axios from 'axios'
 
 export default {
   name: 'BookingList',
   components: {
     HeaderMenu
   },
+  //创建页面时调用的函数
+  created(){
+    this.getOrder();
+  },
   methods: {
+    getOrder(){
+      axios.get("http://localhost:9090/order")
+      .then((res)=>{
+        this.tableData=res.data
+      }).catch(function (error){
+        console.log(error)
+      })
+    },
     //取消订单
       handleClick(row) {
         console.log('取消'+row.id);
@@ -228,183 +165,7 @@ export default {
       //调试用，之后用全局变量
       role:'3',      //1用户，2物业，3管理员
 
-      tableData: [{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 17:00:00',
-          end:'2022-05-15 21:00:00',
-          state:1
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 18:00:00',
-          end:'2022-05-15 21:00:00',
-          state:2
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-05 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:3
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:1
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:2
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:3
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:1
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:2
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:3
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:1
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:2
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:3
-        }],
-      adminTableData:[{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '开会',
-          note:'时长超过三小时',
-          flag:true,
-          room:403,
-          start:'2022-05-15 17:00:00',
-          end:'2022-05-15 21:00:00',
-          state:1
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          note:'',
-          flag:false,
-          room:403,
-          start:'2022-05-15 18:00:00',
-          end:'2022-05-15 21:00:00',
-          state:2
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄如果有一个很长很长很长很长的主题',
-          note:'',
-          flag:false,
-          room:403,
-          start:'2022-05-05 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:3
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          note:'',
-          flag:false,
-          room:403,
-          start:'2022-05-15 19:00:00',
-          end:'2022-05-15 21:00:00',
-          state:1
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          note:'',
-          flag:true,
-          room:403,
-          start:'2022-05-13 19:00:00',
-          end:'2022-05-13 21:00:00',
-          state:2
-        },{
-          id:1234,
-          name: '王小虎',
-          number:'17625342266',
-          theme: '上海市普陀区金沙江路 1518 弄',
-          note:'',
-          flag:false,
-          room:403,
-          start:'2022-05-15 9:00:00',
-          end:'2022-05-15 11:00:00',
-          state:3
-        }
-      ]
+      tableData: []
     }
   }
 }

@@ -154,7 +154,7 @@ export default {
         accountData:[],
         search: '',
         currentPage: 1,
-        pageSize: 5,
+        pageSize: 10,
         total:0,
     }
   },
@@ -249,6 +249,7 @@ export default {
                             type: 'info',
                             message: '已成功添加'
                         });
+                        location. reload()     //新建账号以后刷新页面
                     }).catch(function (error){
                         console.log(error)
                     })

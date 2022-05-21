@@ -7,12 +7,12 @@
         <el-select 
           v-model="roomValue" 
           placeholder="请选择会议室" 
-          @change="changeRoom(roomValue)">
+          @change="changeRoom">
           <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
-            :value="item.label">
+            :value="item.value">
           </el-option>
         </el-select>
         <el-button 
@@ -59,7 +59,7 @@
             <i class="el-icon-office-building"></i>
             会议室
           </template>
-          {{this.roomValue}}
+          {{eventInfo.room}}
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -82,8 +82,44 @@
           </template>
           {{eventInfo.theme}}
         </el-descriptions-item>
+        <el-descriptions-item>
+          <template slot="label">
+            <i class="el-icon-magic-stick"></i>
+            状态
+          </template>
+          <el-tag
+            :type="eventInfo.state == 1 ? 'info' : eventInfo.state == 2 ? 'success' : 'danger'"
+            disable-transitions>
+            {{eventInfo.state == 1 ? '未审核' : eventInfo.state == 2 ? '已通过' : '已失败'}}
+          </el-tag>
+        </el-descriptions-item>
       </el-descriptions>
-      <RecordForm v-if="role==2||role==3"></RecordForm>
+      <template v-if="role==2||role==3">
+        <div id="record-form">
+          <span class="head-line">使用记录</span>
+          <el-form 
+            label-width="12%" 
+            class="demo-ruleForm">
+            <el-form-item 
+              label="记录" 
+              prop="record">
+              <el-input 
+                type="textarea"
+                placeholder="对会议室使用情况做简单记录" 
+                v-model="record"
+                maxlength="200">
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button 
+                type="primary" 
+                @click="submitForm">
+                提交
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
     </el-drawer>
   </div>
 </template>
@@ -96,14 +132,13 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 
-import RecordForm from '../components/RecordForm.vue'
+import axios from 'axios'
 
 export default {
   name: 'BookingCalendar',
   components:{
     FullCalendar,
-    HeaderMenu,
-    RecordForm
+    HeaderMenu
   },
   data () {
     return {
@@ -112,22 +147,7 @@ export default {
 
       //顶部选择器
       roomValue:'',
-      options: [{
-          value: 1,
-          label: '黄金糕'
-        }, {
-          value: 2,
-          label: '双皮奶'
-        }, {
-          value: 3,
-          label: '蚵仔煎'
-        }, {
-          value: 4,
-          label: '龙须面'
-        }, {
-          value: 5,
-          label: '北京烤鸭'
-        }],
+      options: [],
 
       //calendar加载的视图
       calendarOptions: {
@@ -157,29 +177,8 @@ export default {
           week:'周',
           day:'日'
         },
-        // 初始就存在的事件
-        events: [
-         {
-          id: 196,
-          title: `会议:1xxxxxxxx可能有一个很长很长很长很长很长的主题`,
-          start: '2022-04-30' + 'T08:00:00',
-          end: '2022-04-30' + 'T10:15:00',
-          extendedProps: {
-            name:'用户1',
-            number: '12345677654'
-          }
-        },
-        {
-          id: 222,
-          title: `会议:2xxxxxxxx`,
-          start: '2022-05-04' + 'T08:15:00',
-          end: '2022-05-04' + 'T22:00:00',
-          // backgroundColor:'red',
-          extendedProps: {
-            name:'fkjfb',
-            number: '12388886666'
-          },
-        }],
+        // 会议事件
+        events: [],
         // 是否可拖拽
         editable: false,
         // 点击事项触发函数
@@ -193,43 +192,77 @@ export default {
       //drawer
       drawer:false,
       eventInfo:{
+        id:'',
         start:'',
         end:'',
         room:'',
         name:'',
         number:'',
         theme:'',
-      }
+        state:''
+      },
+      record:''
     }
   },
   //创建页面
   created(){
+    this.getRoomNumber();
     this.getRoomID();
   },
   methods:{
+    getRoomNumber(){
+      axios.get("http://localhost:9090/room/getNumber")
+      .then((res)=>{
+          this.options=res.data
+      }).catch(function (error){
+          console.log(error)
+      })
+    },
+    //从会议室列表跳转过来
     getRoomID(){
       let tmp=this.$route.params.id;
-      for(let i=0;i<this.options.length;i++){
-        this.roomValue=this.options[i].label;
-        if(this.options[i].value==tmp)
-          break;
-      }
+      this.roomValue=tmp;
+      if(this.roomValue!=undefined)
+        this.getMeeting();
+      
+    },
+    //获取日历上的会议事件
+    getMeeting(){
+      axios.get("http://localhost:9090/order/getByRoom",{
+        params:{
+          room_id:this.roomValue
+        }
+      }).then((res)=>{
+          this.calendarOptions.events=res.data;
+          for(let i=0;i<res.data.length;i++){
+            if(res.data[i].extendedProps.state==1)
+              this.$set(this.calendarOptions.events[i], 'backgroundColor', 'grey')
+          }
+          console.log(res)
+      }).catch(function (error){
+          console.log(error)
+      })
     },
     //点击日历上的事件
     handleEventClick(e){
+      this.eventInfo.id=e.event.id;
       this.eventInfo.start=e.event.start;
       this.eventInfo.end=e.event.end;
       this.eventInfo.name=e.event.extendedProps.name;
-      this.eventInfo.number=e.event.extendedProps.number;
+      this.eventInfo.number=e.event.extendedProps.phone;
       this.eventInfo.theme=e.event.title;
-      //!!!!!!!!!!!!************处理room的逻辑************!!!!!!!!!!!!————待解决
+      this.eventInfo.room=e.event.extendedProps.room_number;
+      this.eventInfo.state=e.event.extendedProps.state;
       this.drawer=true;
     },
-    changeRoom(value){
-      console.log(value)
+    changeRoom(){
+      this.getMeeting();
     },
     clickToOrder(){
       this.$router.push({name:'order',params: {number:this.roomValue}})
+    },
+    submitForm(){
+      console.log('submit!'+this.eventInfo.id);
     }
   }
 }
@@ -248,4 +281,11 @@ export default {
   .choice, .descriptions{
     margin: 1% 3% 1% 3%;
   }
+  #record-form{
+    margin: 3% 3% 1% 3%;
+}
+.head-line{
+    font-weight: bold;
+    font-size: 15px;
+}
 </style>
