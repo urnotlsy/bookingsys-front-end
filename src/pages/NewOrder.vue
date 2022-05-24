@@ -243,15 +243,23 @@ export default {
               start_time: start,
               end_time: end
             }
-          }).then(()=>{
-                        this.$message({
-                            type: 'info',
-                            message: '已成功添加'
-                        });
-                        location. reload()     //新建账号以后刷新页面
-                    }).catch(function (error){
-                        console.log(error)
-                    })
+          }).then((res)=>{
+            console.log(res)
+            if(res.data==-1){
+              this.$message({
+                  type: 'warning',
+                  message: '存在时间冲突！请选择其他时间或其他会议室!'
+              });
+            }else{
+              this.$message({
+                  type: 'info',
+                  message: '已成功添加'
+              });
+              location. reload()     //新建账号以后刷新页面
+            }
+          }).catch(function (error){
+              console.log(error)
+          })
           
         } else {
           console.log('error submit!!');

@@ -83,11 +83,20 @@
             label="操作">
             <template slot-scope="scope">
               <el-button 
+                v-if="role==1||role==2"
                 @click="handleClick(scope.row)" 
                 type="primary" 
                 plain 
                 size="small">
                 取消预约
+              </el-button>
+              <el-button 
+                v-if="role==3"
+                @click="deleteOrder(scope.row.order_id)" 
+                type="danger" 
+                plain 
+                size="small">
+                删除记录
               </el-button>
             </template>
           </el-table-column>
@@ -140,10 +149,27 @@ export default {
         console.log(error)
       })
     },
+    deleteOrder(order_id){
+      axios.delete("http://localhost:9090/order/"+order_id)
+      .then(()=>{
+        location. reload()     //刷新页面
+      }).catch(function (error){
+          console.log(error)
+      })
+    },
     //取消订单
-      handleClick(row) {
-        console.log('取消'+row.id);
-      },
+    handleClick(row) {
+      let now = new Date();
+      let start_time = new Date(row.order_date+' '+row.start_time);
+      if(now-start_time>=0){
+        this.$message({
+          type: 'info',
+          message: '不可以取消过去的预约'
+        });
+      }else{
+        this.deleteOrder(row.order_id)
+      }
+    },
       filterTag(value, row) {
         return row.state === value;
       },
@@ -152,12 +178,38 @@ export default {
         return row[property] === value;
       },
       passClick(row){
-        console.log('通过'+row.id);
-        //post后端，提示成功or错误信息，刷新页面
+        //state=2为通过
+        axios({url:'http://localhost:9090/order/check',
+          method:'post',
+          params:{
+            order_id:row.order_id, 
+            state:2
+          }
+        }).then(()=>{
+          this.$message({
+            type: 'info',
+            message: '已成功设置'
+          });
+        }).catch(function (error){
+            console.log(error)
+        })
       },
       refuseClick(row){
-        console.log('拒绝'+row.id);
-        //post后端，提示成功or错误信息，刷新页面
+        //state=3为拒绝
+        axios({url:'http://localhost:9090/order/check',
+          method:'post',
+          params:{
+            order_id:row.order_id, 
+            state:3
+          }
+        }).then(()=>{
+          this.$message({
+            type: 'info',
+            message: '已成功设置'
+          });
+        }).catch(function (error){
+            console.log(error)
+        })
       }
   },
   data(){

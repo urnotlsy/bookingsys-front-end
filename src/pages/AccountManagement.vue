@@ -216,12 +216,12 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                axios
-                .delete("http://localhost:9090/user/"+row.user_id)
-                .catch(function (error){
+                axios.delete("http://localhost:9090/user/"+row.user_id)
+                .then(()=>{
+                    location. reload()     //删除账号以后刷新页面
+                }).catch(function (error){
                     console.log(error)
                 })
-                location. reload()     //删除账号以后刷新页面
             }).catch(() => {
                 this.$message({
                     type: 'info',

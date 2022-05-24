@@ -262,7 +262,17 @@ export default {
       this.$router.push({name:'order',params: {number:this.roomValue}})
     },
     submitForm(){
-      console.log('submit!'+this.eventInfo.id);
+      axios({url:'http://localhost:9090/order/record',
+          method:'post',
+          params:{
+            order_id:this.eventInfo.id, 
+            record:this.record
+          }
+        }).then(()=>{
+          this.drawer=false
+        }).catch(function (error){
+            console.log(error)
+        })
     }
   }
 }
