@@ -1,6 +1,7 @@
 <template>
   <div id="bookingcalendar">
     <HeaderMenu/>
+    <p>{{this.role}}</p>
     <div class="main">
       <div class="choice">
         <span>选择会议室：</span>
@@ -94,7 +95,7 @@
           </el-tag>
         </el-descriptions-item>
       </el-descriptions>
-      <template v-if="role==2||role==3">
+      <template v-if="role=='guard'||role=='admin'">
         <div id="record-form">
           <span class="head-line">使用记录</span>
           <el-form 
@@ -143,7 +144,7 @@ export default {
   data () {
     return {
       //调试用，之后用全局变量
-      role:'3',      //1用户，2物业，3管理员
+      role:'',      //1用户，2物业，3管理员
 
       //顶部选择器
       roomValue:'',
@@ -206,6 +207,7 @@ export default {
   },
   //创建页面
   created(){
+    this.role = JSON.parse(window.localStorage.getItem('access'));
     this.getRoomNumber();
     this.getRoomID();
   },

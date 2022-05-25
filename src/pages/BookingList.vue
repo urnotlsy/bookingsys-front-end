@@ -7,7 +7,8 @@
         v-if="role==3">
         <el-button 
           type="primary" 
-          class="export-button">
+          class="export-button"
+          @click="exportFile">
           导出会议记录
         </el-button>
       </div>
@@ -169,6 +170,12 @@ export default {
       }else{
         this.deleteOrder(row.order_id)
       }
+    },
+    //导出会议记录
+    exportFile(){
+      let a = document.createElement('a')
+      a.href ="http://localhost:9090/order/export"
+      a.click();
     },
       filterTag(value, row) {
         return row.state === value;

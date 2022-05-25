@@ -37,7 +37,7 @@ export default {
     return{
       //调试用，之后用全局变量
       role:'1',      //1用户，2物业，3管理员
-      login:'1',
+      login:'0',
 
     }
   },
