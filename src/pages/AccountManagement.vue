@@ -160,9 +160,17 @@ export default {
   },
   //创建页面时调用的函数
   created(){
+      this.checkRole();
       this.getAcoount();
   },
   methods:{
+        //验证登录权限角色
+        checkRole(){
+            let acc = JSON.parse(window.localStorage.getItem('access'));
+            if(!acc||acc.role!='admin'){
+                this.$router.replace({name:'homepage'})
+            }
+        },
         //查询账号数据
         getAcoount(){
             axios.get("http://localhost:9090/user/page",{

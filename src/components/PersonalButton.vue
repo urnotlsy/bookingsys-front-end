@@ -28,10 +28,11 @@ export default {
   methods:{
     //个人中心
     goToPersonal(){
-      this.$router.push('/personal')
+      this.$router.replace({name:'personal'})
     },
     logOut(){
-      //退出登录
+      window.localStorage.removeItem('access')
+      location. reload()
     }
   }
   

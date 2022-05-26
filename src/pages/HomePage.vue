@@ -34,7 +34,7 @@
         </el-button>
         <el-button 
           class="option-button account-button" 
-          v-if="role==3"
+          v-if="role=='admin'"
           @click="manageAccount">
           <h1 class="card-content">
             账号管理
@@ -49,7 +49,7 @@
         </div>
         <el-button type="info" class="download-button">下载文件</el-button>
         <el-upload
-          v-if="role==3"
+          v-if="role=='admin'"
           class="upload-demo"
           action="https://jsonplaceholder.typicode.com/posts/"
           :on-preview="handlePreview"
@@ -76,11 +76,15 @@ export default {
   },
   data () {
     return {
-      //调试用，之后用全局变量
-      role:'3',      //1用户，2物业，3管理员
-      login:'0',
+      role:'',
       // fileList:''
       
+    }
+  },
+  created(){
+    let acc = JSON.parse(window.localStorage.getItem('access'));
+    if(acc){
+      this.role = acc.role;
     }
   },
   methods:{

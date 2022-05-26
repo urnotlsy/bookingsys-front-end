@@ -21,7 +21,7 @@ export default {
   methods:{
     //登录
     logIn(){
-      this.$router.push('/login')
+      this.$router.replace({name:'login'})
     }
   }
   

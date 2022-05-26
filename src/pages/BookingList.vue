@@ -4,7 +4,7 @@
     <div class="main">
       <div 
         class="export-records"
-        v-if="role==3">
+        v-if="role=='admin'">
         <el-button 
           type="primary" 
           class="export-button"
@@ -84,7 +84,7 @@
             label="操作">
             <template slot-scope="scope">
               <el-button 
-                v-if="role==1||role==2"
+                v-if="role=='user'||role=='guard'"
                 @click="handleClick(scope.row)" 
                 type="primary" 
                 plain 
@@ -92,7 +92,7 @@
                 取消预约
               </el-button>
               <el-button 
-                v-if="role==3"
+                v-if="role=='admin'"
                 @click="deleteOrder(scope.row.order_id)" 
                 type="danger" 
                 plain 
@@ -104,7 +104,7 @@
           <el-table-column
             label="审批"
             width="150"
-            v-if="role==3">
+            v-if="role=='admin'">
             <template slot-scope="scope">
               <el-button 
                 @click="passClick(scope.row)" 
@@ -140,6 +140,10 @@ export default {
   //创建页面时调用的函数
   created(){
     this.getOrder();
+    let acc = JSON.parse(window.localStorage.getItem('access'));
+    if(acc){
+      this.role = acc.role;
+    }
   },
   methods: {
     getOrder(){
@@ -168,7 +172,15 @@ export default {
           message: '不可以取消过去的预约'
         });
       }else{
-        this.deleteOrder(row.order_id)
+        let acc = JSON.parse(window.localStorage.getItem('access'));
+        if(acc&&acc.user_id==row.user_id){
+          this.deleteOrder(row.order_id)
+        }else{
+          this.$message({
+            type: 'info',
+            message: '只能取消自己的预约'
+          });
+        }
       }
     },
     //导出会议记录
@@ -221,8 +233,7 @@ export default {
   },
   data(){
     return{
-      //调试用，之后用全局变量
-      role:'3',      //1用户，2物业，3管理员
+      role:'',
 
       tableData: []
     }

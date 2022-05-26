@@ -27,6 +27,8 @@
 <script>
 import LogInButton from './LogInButton.vue'
 import PersonalButton from './PersonalButton.vue'
+import axios from 'axios'
+
 export default {
   name: 'HeaderMenu',
   components:{
@@ -35,21 +37,43 @@ export default {
   },
   data(){
     return{
-      //调试用，之后用全局变量
-      role:'1',      //1用户，2物业，3管理员
       login:'0',
-
     }
+  },
+  created(){
+    this.checkToken();
   },
   methods:{
     //跳转回首页
     backToHome(){
-      this.$router.push('/homepage')
-      
+      this.$router.replace({name:'homepage'})
     },
     //登录
     logIn(){
-      this.$router.push('/login')
+      this.$router.replace({name:'login'})
+    },
+    checkToken(){
+      let acc = JSON.parse(window.localStorage.getItem('access'))
+      if(!acc){
+        this.login=0;
+      }else{
+        this.login=1;
+          //检验token合法性
+        axios({
+          url:'http://localhost:9090/checkToken',
+          method:'get',
+          headers:{
+              token:acc.token
+          }
+        }).then((res)=>{
+          if(!res.data){
+              alert('验证过期，请重新登录！')
+              this.login=0;
+          }else{
+            this.login=1;
+          }
+        })
+      }
     }
   }
   

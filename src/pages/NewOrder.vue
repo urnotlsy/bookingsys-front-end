@@ -157,7 +157,7 @@ export default {
       }
     };
     return{
-      user_id:1,
+      user_id:'',
 
       ruleForm:{
         room:'',
@@ -183,6 +183,10 @@ export default {
   },
   //创建页面时调用的函数
   created(){
+    let acc = JSON.parse(window.localStorage.getItem('access'));
+    if(acc){
+      this.user_id = acc.user_id;
+    }
     this.getRoomNumber();
     this.getUserInfo();
     this.ruleForm.room=this.$route.params.number;

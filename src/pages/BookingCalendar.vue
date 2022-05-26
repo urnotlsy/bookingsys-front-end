@@ -1,7 +1,6 @@
 <template>
   <div id="bookingcalendar">
     <HeaderMenu/>
-    <p>{{this.role}}</p>
     <div class="main">
       <div class="choice">
         <span>选择会议室：</span>
@@ -143,8 +142,7 @@ export default {
   },
   data () {
     return {
-      //调试用，之后用全局变量
-      role:'',      //1用户，2物业，3管理员
+      role:'',
 
       //顶部选择器
       roomValue:'',
@@ -207,7 +205,10 @@ export default {
   },
   //创建页面
   created(){
-    this.role = JSON.parse(window.localStorage.getItem('access'));
+    let acc = JSON.parse(window.localStorage.getItem('access'));
+    if(acc){
+      this.role = acc.role;
+    }
     this.getRoomNumber();
     this.getRoomID();
   },

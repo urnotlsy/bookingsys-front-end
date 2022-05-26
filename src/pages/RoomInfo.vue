@@ -2,7 +2,7 @@
   <div id="roominfo">
     <HeaderMenu/>
     <div class="main">
-      <div class="room-add" v-if="role==3">
+      <div class="room-add" v-if="role=='admin'">
         <el-button 
           type="primary" 
           @click="dialogVisible = true"
@@ -119,7 +119,7 @@
                 type="primary" 
                 plain 
                 size="small"
-                v-if="role==1||role==2">
+                v-if="role=='user'||role=='guard'">
                 预约会议室
               </el-button>
               <el-button 
@@ -127,7 +127,7 @@
                 type="danger" 
                 plain 
                 size="small"
-                v-if="role==3">
+                v-if="role=='admin'">
                 删除会议室
               </el-button>
             </template>
@@ -150,7 +150,7 @@ export default {
   data(){
     return{
       //调试用，之后用全局变量
-      role:'3',      //1用户，2物业，3管理员
+      role:'',      //1用户，2物业，3管理员
 
       rooms:[],
       dialogVisible: false,
@@ -170,6 +170,11 @@ export default {
   //创建页面时调用的函数
   created(){
     this.getRoom();
+    let acc = JSON.parse(window.localStorage.getItem('access'));
+    if(acc){
+      this.role = acc.role;
+    }
+    
   },
   methods:{
     //查询会议室信息，会议室不多所以不分页
