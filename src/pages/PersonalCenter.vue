@@ -64,6 +64,12 @@ export default{
     components:{
         HeaderMenu
     },
+    created(){
+        let acc = JSON.parse(window.localStorage.getItem('access'));
+        if(acc){
+        this.userInfo.user_id=acc.user_id;
+        }
+    },
     data(){
         var validatePass = (rule, value, callback) => {
             if (value === '') {
@@ -83,7 +89,7 @@ export default{
         };
         return{
             userInfo:{
-                user_id: 11,
+                user_id: '',
                 name:'',
                 phone:'',
                 pass:'',
